@@ -6,7 +6,7 @@
 
 This project automatically classifies, prioritizes, and assigns tasks to users based on their behavior, deadlines, and workloads.
 
-🧠 Features:
+##🧠 Features:
 - Smart Task Assignment using ML and deadline/workload/behavior
 - Dashboard with Task Table, Priority Pie Chart, Performance Graph
 - Model Prediction Accuracy check
@@ -15,13 +15,13 @@ This project automatically classifies, prioritizes, and assigns tasks to users b
 - Summary: Total Tasks & Overdue Tasks
 - Future-Ready: Trello/Jira API Ready
 
-🛠️ Technologies Used:
+##🛠️ Technologies Used:
 - Python (Pandas, Streamlit, Matplotlib, Seaborn)
 - Machine Learning (Classification)
 - Data Preprocessing & EDA
 - CSV-Based Simulated Data (Task + User + Model)
 
-📁 File Structure:
+##📁 File Structure:
 - `dashboard.py`: Streamlit main dashboard
 - `smart_assigner.py`: ML-based assignment logic
 - `task_classifier.py`: Trained model logic
@@ -29,7 +29,7 @@ This project automatically classifies, prioritizes, and assigns tasks to users b
 - `user_data.csv`: User behavior/workload data
 - `model_predictions.csv`: Priority prediction results
 
-🖥️ Run Locally:
+###🖥️ Run Locally:
 1. Clone repo or copy files
 2. Install requirements: `pip install streamlit pandas matplotlib seaborn`
 3. Run: `streamlit run dashboard.py`
@@ -41,7 +41,7 @@ For `user_data.csv`:
 For `tasks_cleaned.csv`:
 - TaskID, Description, Deadline, AssignedTo, Priority, Status
 
-📊 Dashboard Sections:
+###📊 Dashboard Sections:
 1. Task Assignment Table
 2. Task Priority Distribution
 3. User Performance Tracker
@@ -50,7 +50,7 @@ For `tasks_cleaned.csv`:
 6. Task Editor (Add/Edit)
 7. Summary of Total & Overdue Tasks
 
-🖼️ Screenshot:
+##🖼️ Screenshot:
 (Insert screenshot here showing dashboard)
 
 🚧 Future Scope:
@@ -73,6 +73,6 @@ For `tasks_cleaned.csv`:
   }
 </script>
 =======
-# Data-Science-and-ML-Projects
+### Data-Science-and-ML-Projects
 ENTERPRISE-LEVEL PROJECTS — DATA SCIENCE &amp; MACHINE LEARNING :- All projects here are considered to be under domain of data science and ML
 >>>>>>> 46243cd2d488d1f67b1010c11e315228a9e9dad2
