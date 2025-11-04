@@ -47,7 +47,7 @@ A Streamlit-based AI Task Management dashboard that classifies, visualizes, and 
 
 ## 🚀 Run Locally
 
-```bash
+'''bash
 # Clone this repository
 git clone https://github.com/ABHIJEET-0001/AI_TASK_MANAGER_2.8.git
 cd AI_TASK_MANAGER_2.8
@@ -62,6 +62,9 @@ pip install -r requirements.txt
 
 # Run the app
 streamlit run app.py
+
+
+
 
 <h2>📊 Dashboard Modules</h2>
 <ul>
