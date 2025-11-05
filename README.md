@@ -133,4 +133,31 @@ T003,High,High,0.88</code></pre>
   💡 Crafted with precision, powered by AI, and designed for innovation.<br>
   <strong>Made with ❤️ by Abhijeet Kasera</strong>
 </p>
+###✅ Contributing
 
+New to open source? We welcome all contributors! Here’s how you can get started:
+
+🌱 Check out the Issues tab — Find open issues and pick one that interests you.
+🛠 Add new features — Improve the AI classification, dashboard UI, or automation modules.
+📝 Enhance documentation — Help make setup guides, code comments, and examples clearer.
+🧪 Write or improve test cases — Strengthen the project’s reliability and performance.
+
+Before submitting your work, please read the CONTRIBUTING.md
+ file for detailed contribution guidelines.
+
+##🎓 Ideal For
+
+Students exploring AI, ML, and NLP applications
+
+Developers interested in task automation and productivity tools
+
+Open source contributors looking for real-world machine learning projects
+
+##📜 License
+
+This project is licensed under the MIT License — you’re free to use, modify, and distribute it with proper credit.
+
+##🙌 Acknowledgements
+
+This project, AI Task Manager 2.8, was created and maintained by Abhijeet Kasera.
+It is inspired by the vision of integrating Artificial Intelligence with task management, enabling smart prioritization, automation, and analytics for better productivity.
