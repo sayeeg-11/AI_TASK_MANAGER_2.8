@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Task Manager — Assignment</title>
+  <style>
+    body { font-family: Arial; margin: 40px; background: #f5f7fa; }
+    h1 { color: #333; }
+    label { display: block; margin-top: 10px; }
+    input, button { margin-top: 5px; padding: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Task Assignment</h1>
+
+  <form id="assignForm">
+    <label>Task ID:</label>
+    <input id="taskId" type="number" required>
+
+    <label>User ID:</label>
+    <input id="userId" type="number" required>
+
+    <button type="submit">Assign Task</button>
+  </form>
+
+  <h2>Unassigned Tasks</h2>
+  <ul id="taskList"></ul>
+
+  <script>
+    async function loadTasks() {
+      const res = await fetch("/api/tasks/unassigned");
+      const tasks = await res.json();
+      const ul = document.getElementById("taskList");
+      ul.innerHTML = "";
+      tasks.forEach(t => {
+        const li = document.createElement("li");
+        li.textContent = `${t.id} — ${t.title}`;
+        ul.appendChild(li);
+      });
+    }
+
+    document.getElementById("assignForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const task_id = document.getElementById("taskId").value;
+      const user_id = document.getElementById("userId").value;
+      const res = await fetch("/api/tasks/assign", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task_id, user_id })
+      });
+      const data = await res.json();
+      alert(data.message || "Assignment failed");
+      loadTasks();
+    });
+
+    loadTasks();
+  </script>
+</body>
+</html>
