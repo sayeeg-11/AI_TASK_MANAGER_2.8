@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from models import db, Task, User
+from datetime import datetime
 
 task_bp = Blueprint("task_bp", __name__)
 
@@ -32,25 +33,24 @@ def get_tasks():
 # -----------------------------
 # ASSIGN TASK TO USER
 # -----------------------------
-@task_bp.route("/api/tasks/assign", methods=["POST"])
-def assign_task():
+@task_bp.route("/api/tasks/<int:task_id>/assign", methods=["POST"])
+def assign_task(task_id):
     data = request.get_json()
-    task_id = data.get("task_id")
     user_id = data.get("user_id")
-
     task = Task.query.get(task_id)
-    user = User.query.get(user_id)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
 
-    if not task or not user:
-        return jsonify({"error": "Invalid task_id or user_id"}), 404
+    if user_id is None:
+        task.assigned_user = None
+    else:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+        task.assigned_user = user
 
-    task.assigned_to_user_id = user.id
     db.session.commit()
-
-    return jsonify({
-        "message": f"Task '{task.title}' assigned to {user.username}",
-        "task": task.to_dict()
-    }), 200
+    return jsonify({"message": "Assignment updated", "task": task.to_dict()}), 200
 
 
 # -----------------------------
@@ -101,3 +101,58 @@ def create_user():
     db.session.add(user)
     db.session.commit()
     return jsonify({"message": "User created", "user": user.to_dict()}), 201
+
+
+# -----------------------------
+# GET SINGLE TASK
+# -----------------------------
+@task_bp.route("/api/tasks/<int:task_id>", methods=["GET"])
+def get_task(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+    return jsonify(task.to_dict()), 200
+
+
+# -----------------------------
+# UPDATE TASK
+# -----------------------------
+@task_bp.route("/api/tasks/<int:task_id>", methods=["PUT"])
+def update_task(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+
+    data = request.get_json() or {}
+    title = data.get("title")
+    description = data.get("description")
+    status = data.get("status")
+    deadline = data.get("deadline")  # YYYY-MM-DD
+
+    if title is not None:
+        task.title = title
+    if description is not None:
+        task.description = description
+    if status is not None:
+        task.status = status
+    if deadline is not None:
+        try:
+            task.deadline = datetime.strptime(deadline, "%Y-%m-%d").date()
+        except ValueError:
+            return jsonify({"error": "Invalid deadline format. Use YYYY-MM-DD"}), 400
+
+    db.session.commit()
+    return jsonify({"message": "Task updated", "task": task.to_dict()}), 200
+
+
+# -----------------------------
+# DELETE TASK
+# -----------------------------
+@task_bp.route("/api/tasks/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+    db.session.delete(task)
+    db.session.commit()
+    return jsonify({"message": "Task deleted"}), 200

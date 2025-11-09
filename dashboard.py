@@ -9,6 +9,10 @@ import streamlit.components.v1 as components
 # import google.generativeai as genai
 import textwrap
 import json
+# top imports
+import requests
+
+API_BASE = "http://127.0.0.1:5000"
 
 
 # Set page configuration
@@ -378,3 +382,112 @@ with st.container():
     else:
         st.warning("⚠️ No tasks available.")
     st.markdown("</div>", unsafe_allow_html=True)
+
+
+def api_get_tasks():
+    r = requests.get(f"{API_BASE}/api/tasks", timeout=10)
+    r.raise_for_status()
+    return r.json()
+
+def api_get_users():
+    r = requests.get(f"{API_BASE}/api/users", timeout=10)
+    r.raise_for_status()
+    return r.json()
+
+def api_create_task(title, description, deadline_iso):
+    payload = {"title": title, "description": description, "deadline": deadline_iso}
+    r = requests.post(f"{API_BASE}/api/tasks", json=payload, timeout=10)
+    r.raise_for_status()
+    return r.json()["task"]
+
+def api_update_task_status(task_id, status):
+    r = requests.put(f"{API_BASE}/api/tasks/{task_id}", json={"status": status}, timeout=10)
+    r.raise_for_status()
+    return r.json()["task"]
+
+def api_delete_task(task_id):
+    r = requests.delete(f"{API_BASE}/api/tasks/{task_id}", timeout=10)
+    r.raise_for_status()
+    return True
+
+def api_assign_task(task_id, user_id_or_none):
+    r = requests.post(f"{API_BASE}/api/tasks/{task_id}/assign", json={"user_id": user_id_or_none}, timeout=10)
+    r.raise_for_status()
+    return r.json()["task"]
+
+st.subheader("🔌 Data Source")
+source = st.radio("Choose data source", ["API", "CSV"], index=0)
+
+if source == "API":
+    try:
+        users = api_get_users()
+        tasks = api_get_tasks()
+        df = pd.DataFrame(tasks)
+    except requests.RequestException as e:
+        st.error(f"❌ API request failed: {e}")
+        st.info("Tip: Start the backend: py app.py")
+        st.stop()
+
+    search = st.text_input("Search tasks by title")
+    if search:
+        df = df[df["title"].str.contains(search, case=False, na=False)]
+
+    if not df.empty:
+        df_display = df.rename(columns={
+            "id": "ID", "title": "Title", "description": "Description",
+            "deadline": "Deadline", "assigned_to": "Assigned To", "status": "Status",
+        })
+        st.dataframe(df_display)
+    else:
+        st.info("No tasks found.")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown("### ➕ Add Task")
+        title = st.text_input("Title")
+        description = st.text_area("Description", height=100)
+        deadline_dt = st.date_input("Deadline", value=None)
+        user_names = [u["username"] for u in users] if users else []
+        assign_to = st.selectbox("Assign to (optional)", ["None"] + user_names)
+
+        if st.button("Create Task", type="primary", use_container_width=True):
+            if not title:
+                st.error("Title is required.")
+            else:
+                deadline_iso = deadline_dt.isoformat() if isinstance(deadline_dt, date) else None
+                try:
+                    created = api_create_task(title, description, deadline_iso)
+                    if assign_to != "None":
+                        target_user = next((u for u in users if u["username"] == assign_to), None)
+                        if target_user:
+                            api_assign_task(created["id"], target_user["id"])
+                    st.success("Task created successfully.")
+                    st.rerun()
+                except requests.HTTPError as e:
+                    st.error(f"Failed to create task: {e}")
+
+    with col2:
+        st.markdown("### 🔄 Update Status")
+        task_ids = df["id"].tolist() if not df.empty else []
+        selected_id = st.selectbox("Task", task_ids)
+        status = st.selectbox("Status", ["Pending", "In Progress", "Completed"])
+
+        if st.button("Update", use_container_width=True):
+            try:
+                api_update_task_status(selected_id, status)
+                st.success("Status updated.")
+                st.rerun()
+            except requests.HTTPError as e:
+                st.error(f"Failed to update: {e}")
+
+    with col3:
+        st.markdown("### 🗑️ Delete Task")
+        del_id = st.selectbox("Task to delete", df["id"].tolist() if not df.empty else [])
+        if st.button("Delete", use_container_width=True):
+            try:
+                api_delete_task(del_id)
+                st.success("Task deleted.")
+                st.rerun()
+            except requests.HTTPError as e:
+                st.error(f"Failed to delete: {e}")
