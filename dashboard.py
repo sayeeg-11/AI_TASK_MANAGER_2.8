@@ -1,3 +1,4 @@
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -101,6 +102,21 @@ st.markdown("""
 .confirm-row [data-testid="column"] {
     padding-left: 4px;
     padding-right: 4px;
+}
+/* --- Task table enhancements: font, sticky header, zebra stripes --- */
+.task-table-container [data-testid="stDataFrame"] table {
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 14px;
+}
+.task-table-container [data-testid="stDataFrame"] table thead tr th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: #ffffff; /* keep header readable over scroll */
+    box-shadow: 0 2px 0 rgba(0,0,0,0.06);
+}
+.task-table-container [data-testid="stDataFrame"] table tbody tr:nth-child(odd) {
+    background-color: #f8fafc; /* light zebra stripe */
 }
 </style>
 """, unsafe_allow_html=True)
@@ -271,7 +287,9 @@ with st.container():
     tasks_sorted = tasks.sort_values(by=['Priority', 'Deadline'])
 
     # 👉 Display the sorted table
-    st.dataframe(tasks_sorted)
+    st.markdown("<div class='task-table-container'>", unsafe_allow_html=True)
+    st.dataframe(tasks_sorted, use_container_width=True, height=400)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("</div>", unsafe_allow_html=True)
 
