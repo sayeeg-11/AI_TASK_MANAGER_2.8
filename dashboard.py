@@ -271,6 +271,11 @@ else:
     user_data = pd.read_csv(user_file)
     predictions = pd.read_csv(prediction_file)
 
+    # Show transient success after bulk update
+    if "bulk_success_msg" in st.session_state:
+        st.toast(st.session_state["bulk_success_msg"], icon="✅")
+        del st.session_state["bulk_success_msg"]
+
     # Task Table
     # Task Table (Updated with Priority Sorting)
 with st.container():
@@ -286,10 +291,58 @@ with st.container():
     # 👉 Sort by Priority first, then Deadline
     tasks_sorted = tasks.sort_values(by=['Priority', 'Deadline'])
 
-    # 👉 Display the sorted table
+    # 👉 Display the table with multi-select checkboxes for bulk actions
     st.markdown("<div class='task-table-container'>", unsafe_allow_html=True)
-    st.dataframe(tasks_sorted, use_container_width=True, height=400)
+    table_for_edit = tasks_sorted.copy()
+    table_for_edit["Select"] = False
+
+    edited_view = st.data_editor(
+        table_for_edit,
+        use_container_width=True,
+        height=400,
+        disabled=["TaskID", "Description", "Deadline", "AssignedTo", "Priority", "Status"],
+        column_config={
+            "Select": st.column_config.CheckboxColumn(
+                "Select",
+                help="Tick to include this task in bulk actions",
+                default=False,
+            )
+        },
+        hide_index=True,
+    )
     st.markdown("</div>", unsafe_allow_html=True)
+
+    # 🔁 Bulk actions bar
+    st.markdown("#### Bulk actions")
+    csel1, csel2, csel3 = st.columns([1.2, 1.5, 1])
+    with csel1:
+        select_all_visible = st.checkbox("Select all visible", key="bulk_select_all")
+    with csel2:
+        bulk_status = st.selectbox("Change Status to", ["Pending", "In Progress", "Completed"], key="bulk_status")
+    with csel3:
+        apply_bulk = st.button("Apply", key="apply_bulk_status")
+
+    if apply_bulk:
+        if select_all_visible:
+            target_ids_list = edited_view["TaskID"].tolist()
+        else:
+            target_ids_list = edited_view.loc[edited_view["Select"] == True, "TaskID"].tolist()
+
+        # Coerce IDs to integers safely
+        if len(target_ids_list) > 0:
+            target_ids = pd.Series(target_ids_list).astype(str).str.extract(r"(\d+)")[0].dropna().astype(int).tolist()
+        else:
+            target_ids = []
+
+        if len(target_ids) == 0:
+            st.info("No tasks selected.")
+        else:
+            # Update underlying tasks df and persist
+            tasks.loc[tasks["TaskID"].astype(int).isin(target_ids), "Status"] = bulk_status
+            save_tasks(tasks)
+            # Show transient feedback on next run for a few seconds via toast
+            st.session_state["bulk_success_msg"] = f" Updated {len(target_ids)} task(s) to '{bulk_status}'."
+            st.rerun()
 
     st.markdown("</div>", unsafe_allow_html=True)
 
