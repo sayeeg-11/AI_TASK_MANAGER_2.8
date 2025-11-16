@@ -5,7 +5,7 @@
 This project provides security updates only for active and stable release versions. The table below shows the versions currently supported:
 
 | Version   | Supported       |
-| --------- | --------------- |
+| --------- | --------------- 
 | **5.1.x** | ✅ Supported     |
 | **5.0.x** | ❌ Not Supported |
 | **4.0.x** | ✅ Supported     |
