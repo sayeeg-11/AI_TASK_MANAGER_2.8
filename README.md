@@ -60,32 +60,61 @@ A Streamlit-based AI Task Management dashboard that classifies, visualizes, and 
 | ☁️ **Platform Compatibility** | Works seamlessly across **Windows**, **macOS**, and **Linux** environments |
 
 
-<h2>📁 Project Structure</h2>
+## 📁 Project Structure
 
-<p>The project is organized into logical sections — application logic, data files, configurations, and documentation — for easy navigation and scalability.</p>
+```bash
+AI_TASK_MANAGER_2.8/
+│
+├── .gitignore
+├── README.md
+├── requirements.txt
+│
+├── app/
+│   ├── main.py
+│   └── routes/
+│       └── task_dashboard.py
+│
+├── assets/
+│   └── (images, icons, UI files)
+│
+├── docs/
+│   ├── CODE_OF_CONDUCT.md
+│   ├── CONTRIBUTING.md
+│   ├── SECURITY.md
+│   └── project_overview.docx
+│
+├── src/
+│   │
+│   ├── data/
+│   │   ├── users.csv
+│   │   ├── user_data.csv
+│   │   ├── tasks.csv
+│   │   ├── tasks_cleaned.csv
+│   │   └── model_predictions.csv
+│   │
+│   ├── preprocessing/
+│   │   ├── check_columns.py
+│   │   ├── eda_analysis.py
+│   │   └── eda_cleaning.py
+│   │
+│   ├── model/
+│   │   ├── task_classifier.py
+│   │   ├── predict_task.py
+│   │   ├── smart_assigner.py
+│   │   ├── assign_tasks.py
+│   │   ├── task_predictor.py
+│   │   ├── update_user_performance.py
+│   │   ├── priority_model.pkl
+│   │   └── vectorizer.pkl
+│   │
+│   └── utils/
+│       ├── models.py
+│       └── user_tracker.py
+│
+└── tests/
+    └── (placeholder for test scripts)
+```
 
-<ul>
-  <li>🧩 <strong><code>dashboard.py</code></strong> — The main Streamlit entry point that powers the user interface, handles task display, visualization, and ML insights in real time.</li>
-
-  <li>🧠 <strong><code>smart_assigner.py</code></strong> — Implements AI-based task allocation logic that analyzes workload, deadlines, and user efficiency for intelligent distribution.</li>
-
-  <li>🤖 <strong><code>task_classifier.py</code></strong> — Trains and applies machine learning models to classify and predict task priority using structured and textual features.</li>
-
-  <li>🗃️ <strong><code>tasks_cleaned.csv</code></strong> — Stores the primary task dataset containing task IDs, descriptions, deadlines, assigned users, priority levels, and statuses.</li>
-
-  <li>👥 <strong><code>user_data.csv</code></strong> — Tracks user performance data including task load, completion history, pending items, and behavior scores.</li>
-
-  <li>📊 <strong><code>model_predictions.csv</code></strong> — Logs ML model outputs, confidence levels, and prediction accuracy metrics for ongoing model improvement.</li>
-
-  <li>⚙️ <strong><code>requirements.txt</code></strong> — Lists all Python dependencies with version locking for a reproducible environment setup.</li>
-
-  <li>🧩 <strong><code>.streamlit/</code></strong> — (Optional) Contains custom Streamlit configuration files for dashboard theming and layout customization.</li>
-
-  <li>🖼️ <strong><code>assets/</code></strong> — Directory containing static files such as images and UI visuals (e.g., <code>dashboard.png</code>).</li>
-
-  <li>🪶 <strong><code>README.md</code></strong> — Provides project overview, setup guide, usage instructions, and contribution workflow.</li>
-
-  <li>🤝 <strong><code>CONTRIBUTING.md</code></strong> — Outlines contribution guidelines, branch naming conventions, and pull request submission steps.</li>
 
 
 
