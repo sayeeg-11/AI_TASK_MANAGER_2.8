@@ -2,6 +2,8 @@ from flask import Flask, render_template
 from flask_cors import CORS
 from models import db
 from routes.tasks import task_bp
+from components.sidebar import sidebar_navigation
+
 import os
 
 app = Flask(__name__)
